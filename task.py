@@ -2,6 +2,8 @@ import datetime
 
 class Ticket:
 
+    tickets_pool = {}
+
     def __init__(self, task):
         self._task = task
         self._open_date = None
