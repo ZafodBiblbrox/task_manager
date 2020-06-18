@@ -3,12 +3,13 @@ import datetime
 
 class User:
 
-    def __init__(self, name):
+    def __init__(self):
         self._login = None
         self._password = None
-        self._name = name
+        self._name = None
         self._created_tickets = {}
         self._assigned_tickets = {}
+        self._authorized = False
 
     @property
     def name(self):
@@ -18,9 +19,35 @@ class User:
     def name(self, name):
         self._name = name
 
-    def log_in_system(self, login, password):
+    @property
+    def login(self):
+        return self._login
+
+    @login.setter
+    def login(self, login):
+        self._login = login
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, password):
+        self._password = password
+
+    @property
+    def authorized(self):
+        return self._authorized
+
+    @authorized.setter
+    def authorized(self, status):
+        self._authorized = status
+
+    def log_in_system(self, name, login, password):
+        self._name = name
         self._login = login
         self._password = password
+        self._authorized = True
 
     def create_ticket(self, task):
         ticket_obj = Ticket(task)
