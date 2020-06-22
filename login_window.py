@@ -1,35 +1,22 @@
 import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+import tkcalendar as tkc
 from user import User
 
 class LoginWindowApp(tk.Frame):
 
-    root = tk.Tk()
 
-    def __init__(self, master=root):
+
+    def __init__(self, user, master=None):
         super().__init__(master)
-        #self._user = user
+        self._user = user
         self._name_entry = None
         self._login_entry = None
         self._password_entry = None
+        self.logged = False
         self.pack()
         self.execute_login_window()
-
-    @property
-    def name_entry(self):
-        return self._name_entry
-
-    @name_entry.setter
-    def name_entry(self, entry):
-        self._name_entry = entry
-
-    @property
-    def login_entry(self):
-        return self._login_entry
-
-    @property
-    def password_entry(self):
-        return self._password_entry
-
 
     def execute_login_window(self):
         self.generate_name_section()
@@ -44,9 +31,8 @@ class LoginWindowApp(tk.Frame):
         name_label = tk.Label(frame, text="Enter your name")
         name_label.pack(side=tk.LEFT)
 
-        name_entry = tk.Entry(frame)
-        name_entry.pack(side=tk.LEFT)
-        
+        self._name_entry = tk.Entry(frame)
+        self._name_entry.pack(side=tk.LEFT)
 
     def generate_login_section(self):
         frame = tk.Frame(self)
@@ -55,9 +41,8 @@ class LoginWindowApp(tk.Frame):
         login_label = tk.Label(frame, text="Enter your login")
         login_label.pack(side=tk.LEFT)
 
-        login_entry = tk.Entry(frame)
-        self._login_entry = login_entry.get()
-        login_entry.pack(side=tk.LEFT)
+        self._login_entry = tk.Entry(frame)
+        self._login_entry.pack(side=tk.LEFT)
 
     def generate_password_section(self):
         frame = tk.Frame(self)
@@ -66,22 +51,25 @@ class LoginWindowApp(tk.Frame):
         password_label = tk.Label(frame, text="Enter your password")
         password_label.pack(side=tk.LEFT)
 
-        password_entry = tk.Entry(frame)
-        self._password_entry = password_entry.get()
-        password_entry.pack(side=tk.LEFT)
+        self._password_entry = tk.Entry(frame)
+        self._password_entry.pack(side=tk.LEFT)
 
     def generate_submit_btn(self):
         frame=tk.Frame(self)
         frame.pack()
 
-        submit_btn = tk.Button(self, text='Login', command=self.print_data)
+        submit_btn = tk.Button(self, text='Login', command=self.log_in)
         submit_btn.pack(side=tk.BOTTOM)
 
-    def print_data(self):
-        print(self.name_entry)
-        print(self.login_entry)
-        print(self.password_entry)
+    def log_in(self):
+        name = self._name_entry.get()
+        login = self._login_entry.get()
+        password = self._password_entry.get()
+        user = self._user
+        if user.is_authorized(name, login, password):
+            self.logged = True
+            user.users.append(user)
+            self.master.destroy()
+        else:
+            messagebox.askyesno(title="Login error", message="Credentials failed, do you want to retry?")
 
-lw = LoginWindowApp()
-
-lw.mainloop()

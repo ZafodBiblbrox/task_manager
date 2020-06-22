@@ -3,6 +3,8 @@ import datetime
 
 class User:
 
+    users = []
+
     def __init__(self):
         self._login = None
         self._password = None
@@ -35,27 +37,14 @@ class User:
     def password(self, password):
         self._password = password
 
-    @property
-    def authorized(self):
-        return self._authorized
-
-    @authorized.setter
-    def authorized(self, status):
-        self._authorized = status
-
-    def log_in_system(self, name, login, password):
+    def is_authorized(self, name, login, password):
         self._name = name
         self._login = login
         self._password = password
-        self._authorized = True
+        if all([self._name, self._login, self._password]):
+            return True
 
-    def create_ticket(self, task):
-        ticket_obj = Ticket(task)
-        ticket_obj.open_date = datetime.date.today()
-        ticket_id = len(self._created_tickets) + 1
-        self._created_tickets[ticket_id] = ticket_obj
-        ticket_obj.ticket_no = ticket_id
-        Ticket.tickets_pool[self.name] = {ticket_id: ticket_obj.task}
+        return False
 
     def define_closure_date(self, ticket_obj, year, month, day):
         ticket_obj.closure_date = datetime.date(year, month, day)

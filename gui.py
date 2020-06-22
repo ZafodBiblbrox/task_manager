@@ -2,70 +2,95 @@ import tkinter as tk
 from tkinter import ttk
 import tkcalendar as tkc
 
-root = tk.Tk()
 
-#Task Description section
-task_description_frame = tk.Frame(root)
-task_description_frame.pack()
+class TaskManagerApp(tk.Frame):
 
-task_label = tk.Label(task_description_frame, text='Task Description')
-task_label.pack(side=tk.LEFT)
+    def __init__(self, user,task, master=None):
+        super().__init__(master)
+        self._description_entry = None
+        self._user_combobox = None
+        self._closure_date = None
+        self._assinged_task = None
+        self._created_task = None
+        self._user = user
+        self._task = task
+        self.pack()
+        self.execute_task_manager_gui()
 
-task_description = tk.Text(task_description_frame, height=10, width=50)
-task_description.pack(side=tk.LEFT)
+    def execute_task_manager_gui(self):
+        self.generate_description_section()
+        self.generate_assign_section()
+        self.generate_date_section()
+        self.generate_submit_section()
+        self.generate_task_list_section()
 
-scroll_text = tk.Scrollbar(task_description_frame)
-scroll_text.pack(side=tk.RIGHT, fill=tk.Y)
-scroll_text.config(command=task_description.yview)
-task_description.config(yscrollcommand=scroll_text.set)
+    def generate_description_section(self):
+        frame = tk.Frame(self)
+        frame.pack()
 
-#Assign user section
-assign_user_frame = tk.Frame(root)
-assign_user_frame.pack()
+        task_label = tk.Label(frame, text="Task Description")
+        task_label.pack(side=tk.LEFT)
 
-user_label = tk.Label(assign_user_frame, text="Choose user to assign: ")
-user_label.pack(side=tk.LEFT)
+        self._description_entry = tk.Text(frame, height=10, width=50)
+        self._description_entry.pack(side=tk.LEFT)
 
-user_combobox = ttk.Combobox(assign_user_frame, values=["User1", "User2", "User3", "User4", "User5"])
-user_combobox.pack(side=tk.LEFT)
+        scroll_text = tk.Scrollbar(frame)
+        scroll_text.pack(side=tk.RIGHT, fill=tk.Y)
+        scroll_text.config(command=self._description_entry.yview)
 
-#Closure date section
-calendar_frame = tk.Frame(root)
-calendar_frame.pack()
+        self._description_entry.config(yscrollcommand=scroll_text.set)
 
-closure_date_label = tk.Label(calendar_frame, text="Choose closure date")
-closure_date_label.pack(side=tk.LEFT)
+    def generate_assign_section(self):
+        registered_users = [user.login for user in self._user.users]
+        frame = tk.Frame(self)
+        frame.pack()
 
-closure_date_picker = tkc.Calendar(calendar_frame, selectmode="day", year=2020, month=5, day=22)
-closure_date_picker.pack(side=tk.LEFT)
+        user_label = tk.Label(frame, text="Choose user to assign: ")
+        user_label.pack(side=tk.LEFT)
 
-closure_date_btn = tk.Button(calendar_frame, text="Submit date")
-closure_date_btn.pack(side=tk.BOTTOM)
+        self._user_combobox = ttk.Combobox(frame, values=registered_users)
+        self._user_combobox.pack(side=tk.LEFT)
 
-#Submit task section
-submit_frame = tk.Frame(root)
-submit_frame.pack()
+    def generate_date_section(self):
+        frame = tk.Frame(self)
+        frame.pack()
 
-submit_btn = tk.Button(submit_frame, text="Submit task")
-submit_btn.pack(side=tk.LEFT)
+        closure_date_label = tk.Label(frame, text="Choose closure date")
+        closure_date_label.pack(side=tk.LEFT)
 
-cancel_btn = tk.Button(submit_frame, text="Cancel")
-cancel_btn.pack(side=tk.RIGHT)
+        self._closure_date = tkc.Calendar(frame, selectmode="day", year=2020, month=6, day=22)
+        self._closure_date.pack(side=tk.LEFT)
 
-#Task list section
-task_frame = tk.Frame(root)
-task_frame.pack()
 
-created_task_label = tk.Label(task_frame, text="Your created tasks")
-created_task_label.pack(side=tk.TOP)
+    def generate_submit_section(self):
+        frame = tk.Frame(self)
+        frame.pack()
 
-created_tasks = tk.Listbox(task_frame, selectmode=tk.MULTIPLE)
-created_tasks.pack(side=tk.LEFT)
+        submit_btn = tk.Button(frame, text="Submit task", command=self.submit_task) #command=self.submit_task
+        submit_btn.pack(side=tk.LEFT)
 
-assign_task_label = tk.Label(task_frame, text="Your assigned task")
-assign_task_label.pack(side=tk.TOP)
+        clear_btn = tk.Button(frame, text="Clear") #command=self.clear_task
+        clear_btn.pack(side=tk.RIGHT)
 
-assinged_tasks = tk.Listbox(task_frame, selectmode=tk.MULTIPLE)
-assinged_tasks.pack(side=tk.RIGHT)
+    def generate_task_list_section(self):
+        frame = tk.Frame(self)
+        frame.pack()
 
-root.mainloop()
+        created_task_label = tk.Label(frame, text="Your created tasks")
+        created_task_label.pack(side=tk.TOP)
+
+        self._created_task = tk.Listbox(frame, selectmode=tk.MULTIPLE)
+        self._created_task.pack(side=tk.RIGHT)
+
+        assign_task_label = tk.Label(frame, text="Your assigned tasks")
+        assign_task_label.pack(side=tk.RIGHT)
+
+        assigned_tasks = tk.Listbox(frame, selectmode=tk.MULTIPLE)
+        assigned_tasks.pack(side=tk.TOP)
+
+    def submit_task(self):
+        task = self._task
+        task_description = self._description_entry.get("1.0", tk.END)
+        closure_date = self._closure_date.selection_get()
+        task.create_ticket(task_description, closure_date)
+        self._created_task.insert(0, task)

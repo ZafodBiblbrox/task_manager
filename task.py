@@ -2,9 +2,9 @@ import datetime
 
 class Ticket:
 
-    tickets_pool = {}
+    tickets_pool = []
 
-    def __init__(self, task):
+    def __init__(self, task=None):
         self._task = task
         self._open_date = None
         self._closure_date = None
@@ -40,6 +40,10 @@ class Ticket:
     def task(self):
         return self._task
 
+    @task.setter
+    def task(self, task):
+        self._task = task
+
     @property
     def ticket_no(self):
         return self._ticket_no
@@ -47,6 +51,12 @@ class Ticket:
     @ticket_no.setter
     def ticket_no(self, ticket_no):
         self._ticket_no = ticket_no
+
+    def create_ticket(self, task, closure_date):
+        self.task = task
+        self.open_date = datetime.date.today()
+        self.closure_date = closure_date
+        self.ticket_no = id
 
     def is_expired(self):
         return self._closure_date < datetime.date.now()
