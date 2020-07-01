@@ -10,7 +10,7 @@ class TaskManagerApp(tk.Frame):
         self._description_entry = None
         self._user_combobox = None
         self._closure_date = None
-        self._assinged_task = None
+        self._assigned_task = None
         self._created_task = None
         self._user = user
         self._task = task
@@ -85,12 +85,16 @@ class TaskManagerApp(tk.Frame):
         assign_task_label = tk.Label(frame, text="Your assigned tasks")
         assign_task_label.pack(side=tk.RIGHT)
 
-        assigned_tasks = tk.Listbox(frame, selectmode=tk.MULTIPLE)
-        assigned_tasks.pack(side=tk.TOP)
+        self._assigned_task = tk.Listbox(frame, selectmode=tk.MULTIPLE)
+        self._assigned_task.pack(side=tk.TOP)
 
     def submit_task(self):
         task = self._task
         task_description = self._description_entry.get("1.0", tk.END)
         closure_date = self._closure_date.selection_get()
-        task.create_ticket(task_description, closure_date)
+        user = self._user
+        task.create_ticket(task_description, closure_date, user)
         self._created_task.insert(0, task)
+        if task.assigned_user == user:
+            self._assigned_task.insert(0, task)
+

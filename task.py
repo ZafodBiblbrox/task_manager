@@ -9,7 +9,7 @@ class Ticket:
         self._open_date = None
         self._closure_date = None
         self._status = None
-        self._ticket_no = None
+        self._assigned_user = None
 
     @property
     def open_date(self):
@@ -29,7 +29,6 @@ class Ticket:
 
     @property
     def status(self):
-        print(self._status)
         return self._status
 
     @status.setter
@@ -45,25 +44,25 @@ class Ticket:
         self._task = task
 
     @property
-    def ticket_no(self):
-        return self._ticket_no
+    def assigned_user(self):
+        return self._assigned_user
 
-    @ticket_no.setter
-    def ticket_no(self, ticket_no):
-        self._ticket_no = ticket_no
+    @assigned_user.setter
+    def assigned_user(self, user):
+        self._assigned_user = user
 
-    def create_ticket(self, task, closure_date):
+    def create_ticket(self, task, closure_date, user):
         self.task = task
         self.open_date = datetime.date.today()
         self.closure_date = closure_date
-        self.ticket_no = id
+        self.assigned_user = user
+        self.status = 'Open'
 
     def is_expired(self):
         return self._closure_date < datetime.date.now()
 
     def __repr__(self):
-        return "Ticket({}, {}, {}, {}, {})".format(self._open_date,
+        return "Ticket({}, {}, {}, {})".format(self._open_date,
                                                    self._closure_date,
                                                    self._task,
-                                                   self._status,
-                                                   self._ticket_no)
+                                                   self._status)
