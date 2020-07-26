@@ -1,7 +1,15 @@
-create table user(
-	user_id integer primary key autoincrement  not null,
-	user_name text,
-	user_login text,
-	user_password text
-	data DATA
-)
+CREATE TABLE user(
+	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	user_name TEXT NOT NULL,
+	user_login TEXT NOT NULL UNIQUE,
+	user_password TEXT NOT NULL
+);
+
+CREATE TABLE ticket(
+	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	description TEXT NOT NULL,
+	open_date TEXT NOT NULL,
+	closure_date TEXT NOT NULL,
+	assignee_id INTEGER NOT NULL,
+	FOREIGN KEY(assignee_id) REFERENCES user(id)
+);
